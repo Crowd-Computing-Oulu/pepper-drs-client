@@ -1,4 +1,4 @@
-package fi.oulu.danielszabo.pepper.screens.conv_demo.tree_conv_service;
+package fi.oulu.danielszabo.pepper.screens.main.tree_conv_service;
 
 
 import android.content.Context;

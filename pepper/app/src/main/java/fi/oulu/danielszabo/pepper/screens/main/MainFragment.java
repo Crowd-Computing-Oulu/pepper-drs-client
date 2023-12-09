@@ -1,4 +1,4 @@
-package fi.oulu.danielszabo.pepper.screens.conv_demo;
+package fi.oulu.danielszabo.pepper.screens.main;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -12,20 +12,23 @@ import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 
-import java.util.Arrays;
 import java.util.Stack;
 
 import fi.oulu.danielszabo.pepper.PepperApplication;
 import fi.oulu.danielszabo.pepper.R;
-import fi.oulu.danielszabo.pepper.screens.conv_demo.listeners.ApproachingHumanGreeter;
-import fi.oulu.danielszabo.pepper.screens.conv_demo.listeners.TouchResponder;
+import fi.oulu.danielszabo.pepper.external_services.ExternalControlService;
+import fi.oulu.danielszabo.pepper.external_services.ExternalConversationService;
+import fi.oulu.danielszabo.pepper.external_services.ExternalSpeechRecognitionService;
+import fi.oulu.danielszabo.pepper.external_services.ExternalSpeechSynthesisService;
+import fi.oulu.danielszabo.pepper.screens.main.listeners.ApproachingHumanGreeter;
+import fi.oulu.danielszabo.pepper.screens.main.listeners.TouchResponder;
 import fi.oulu.danielszabo.pepper.log.LOG;
-import fi.oulu.danielszabo.pepper.screens.conv_demo.tree_conv_service.OfflinePepperService;
-import fi.oulu.danielszabo.pepper.screens.conv_demo.tree_conv_service.ResponseWithOptions;
+import fi.oulu.danielszabo.pepper.screens.main.tree_conv_service.OfflinePepperService;
+import fi.oulu.danielszabo.pepper.screens.main.tree_conv_service.ResponseWithOptions;
 import fi.oulu.danielszabo.pepper.tools.SimpleController;
 import fi.oulu.danielszabo.pepper.tools.SpeechInput;
 
-public class ConversationDemoFragment extends Fragment {
+public class MainFragment extends Fragment {
 
 //    This application only handles a single dialogue
     private static final String CONV_ID = "c1";
@@ -35,18 +38,11 @@ public class ConversationDemoFragment extends Fragment {
     private final OfflinePepperService CONV_SERVICE = new OfflinePepperService(this.getActivity());
 
 //    Self-reference for other threads ot be able to call Activity
-    private final ConversationDemoFragment thisConversationDemoFragment = this;
-
-//     Always available options and their respective phrase sets
-    private static String[] hiddenOptions;
-    private static String[][] hiddenOptionPhraseSets;
+    private final MainFragment thisMainFragment = this;
 
 //     Contextual (based on latest response) available options and their respective phrase sets
     private String[] displayedContextualOptions;
     private String[][] contextualOptionPhraseSets;
-
-//    previous responses in a stack for the "go back" functionality
-    private Stack<ResponseWithOptions> responseStack = new Stack<>();
 
 //    UI Element references
     private Button[] largeButtons = new Button[5];
@@ -59,47 +55,6 @@ public class ConversationDemoFragment extends Fragment {
 //    latest response from the conversation service
     private ResponseWithOptions currentResponse;
 
-//    Initialisation functions
-    private static void initHiddenOptionPhraseSets() {
-        hiddenOptionPhraseSets = new String[][] {
-                    new String[] {
-                            "Go back", "Back", "Please go back", "Back Please"
-                    },
-                    new String[] {
-                            "Start Over", "Start Again", "Again", "Restart"
-                    },
-                    new String[] {
-                            "Turn Left"
-                    },
-                    new String[] {
-                            "Turn Right"
-                    },
-                    new String[] {
-                            "Turn Around", "spin"
-                    },
-                    new String[] {
-                            "Step Forward", "forward", "move forward"
-                    },
-                    new String[] {
-                            "Repeat", "Please repeat that", "Say again", "Say that again", "Please say again", "Go again", "Please go again"
-                    }
-            };
-
-        assert hiddenOptions.length == hiddenOptionPhraseSets.length;
-    }
-
-    private static void initHiddenOptions() {
-        hiddenOptions = new String[]{
-                "GO_BACK",
-                "START_OVER",
-                "TURN_LEFT",
-                "TURN_RIGHT",
-                "TURN_AROUND",
-                "STEP_FORWARD",
-                "REPEAT",
-        };
-    }
-
     private static void registerTouchListeners() {
         PepperApplication.qiContext.getTouchAsync().andThenConsume(t -> t.getSensor("Head/Touch").addOnStateChangedListener(new TouchResponder("Head")));
         PepperApplication.qiContext.getTouchAsync().andThenConsume(t -> t.getSensor("LHand/Touch").addOnStateChangedListener(new TouchResponder("Left Hand")));
@@ -107,19 +62,12 @@ public class ConversationDemoFragment extends Fragment {
     }
 
     private static void registerHumanAwerenessListeners() {
-        // Register logging listeners
-//        PepperApplication.qiContext.getHumanAwarenessAsync().andThenConsume(ha -> ha.addOnHumansAroundChangedListener(humans -> LOG.debug("onHumansAroundChanged", humans != null ? humans.toString() : "null")));
-//        PepperApplication.qiContext.getHumanAwarenessAsync().andThenConsume(ha -> ha.addOnEngagedHumanChangedListener(engagedHuman -> LOG.debug("onEngagedHumanChanged", engagedHuman != null ? engagedHuman.toString() : "null")));
-//        PepperApplication.qiContext.getHumanAwarenessAsync().andThenConsume(ha -> ha.addOnRecommendedHumanToApproachChangedListener(engagedHuman -> LOG.debug("onRecommendedHumanToApproachChanged", engagedHuman != null ? engagedHuman.toString() : "null")));
-//        PepperApplication.qiContext.getHumanAwarenessAsync().andThenConsume(ha -> ha.addOnRecommendedHumanToEngageChangedListener(engagedHuman -> LOG.debug("onRecommendedHumanToEngageChanged", engagedHuman != null ? engagedHuman.toString() : "null")));
-
         // Register behavioural listeners
         PepperApplication.qiContext.getHumanAwarenessAsync().andThenConsume(ha -> ha.addOnHumansAroundChangedListener(new ApproachingHumanGreeter()));
     }
 
     private void initConv() {
 
-        responseStack = new Stack<>();
         CONV_SERVICE.startConversation(CONV_ID);
         displayedContextualOptions = CONV_SERVICE.getStartingState(CONV_ID).getOptions();
         contextualOptionPhraseSets = CONV_SERVICE.getStartingState(CONV_ID).getPhraseSets();
@@ -144,7 +92,7 @@ public class ConversationDemoFragment extends Fragment {
         });
 
         SpeechInput.selectOptionWithPhraseSets(r -> handleSelectedOption(r.getHeardPhrase().getText())
-                , displayedContextualOptions, allOptionPhraseSets());
+                , displayedContextualOptions, contextualOptionPhraseSets);
 
 
     }
@@ -188,8 +136,6 @@ public class ConversationDemoFragment extends Fragment {
 
         //    Initialisation
         {
-            initHiddenOptions();
-            initHiddenOptionPhraseSets();
             registerHumanAwerenessListeners();
             registerTouchListeners();
             initConv();
@@ -226,10 +172,10 @@ public class ConversationDemoFragment extends Fragment {
             buttonSkip.setVisibility(View.INVISIBLE);
 
             SpeechInput.selectOptionWithPhraseSets(r -> handleSelectedOption(r.getHeardPhrase().getText())
-                    , displayedContextualOptions, allOptionPhraseSets());
+                    , displayedContextualOptions, contextualOptionPhraseSets);
         });
 
-        SpeechInput.selectOptionWithPhraseSets(r -> handleSelectedOption(r.getHeardPhrase().getText()), displayedContextualOptions, allOptionPhraseSets());
+        SpeechInput.selectOptionWithPhraseSets(r -> handleSelectedOption(r.getHeardPhrase().getText()), displayedContextualOptions, contextualOptionPhraseSets);
     }
 
 
@@ -263,105 +209,6 @@ public class ConversationDemoFragment extends Fragment {
 
     /**
      *
-     *  This method checks the input (regardless of where it comes from) for any matches against hidden options
-     * and then executes them.
-     *
-     * @return whether a hidden input was matched (and executed)
-     *
-     */
-    private boolean executeHiddenOptionSelected(String input) {
-        for (int i = 0; i < hiddenOptionPhraseSets.length; i++) {
-            for (int j = 0; j < hiddenOptionPhraseSets[i].length; j++) {
-                if(hiddenOptionPhraseSets[i][j].equalsIgnoreCase(input)) {
-                    LOG.debug(this, "HIDDEN INPUT: " + hiddenOptions[i]);
-                    switch (hiddenOptions[i]) {
-                        case "GO_BACK": {
-                            if(!responseStack.empty()) {
-                                currentResponse = responseStack.pop();
-                                handleNewCurrentResponse();
-                            }
-                            break;
-                        }
-                        case "START_OVER": {
-                            initConv();
-                            return true;
-                        }
-                        case "TURN_LEFT": {
-                            SimpleController.turnLeft();
-                            break;
-                        }
-                        case "TURN_RIGHT": {
-                            SimpleController.turnRight();
-                            break;
-                        }
-                        case "TURN_AROUND": {
-                            SimpleController.turnAround();
-                            break;
-                        }
-                        case "STEP_FORWARD":  {
-                            SimpleController.moveForward();
-                            break;
-                        }
-                        case "REPEAT":  {
-//                          update captions text, make them visible
-                            runOnUiThread(() -> {
-                                captionText.setText(currentResponse.getResponseText());
-                                setCaptionsVisible(true);
-                                setOptionsVisible(false);
-                                setThinkingVisible(false);
-                                buttonSkip.setVisibility(View.VISIBLE);
-                            });
-
-                            SimpleController.say(__ -> {
-//                                hide captions again when done talking
-                                 runOnUiThread(() -> {
-                                    captionText.setVisibility(View.INVISIBLE);
-                                    setCaptionsVisible(false);
-                                    setOptionsVisible(true);
-                                    setThinkingVisible(false);
-                                     buttonSkip.setVisibility(View.INVISIBLE);
-                                });
-
-                                SpeechInput.selectOptionWithPhraseSets(r -> handleSelectedOption(r.getHeardPhrase().getText())
-                                        , displayedContextualOptions, allOptionPhraseSets());
-
-                            }, currentResponse.getResponseText());
-//                            We shouldn't start listening until we finished yapping, it'll have its own return path
-                            return true;
-                        }
-                    }
-
-
-                    runOnUiThread(() -> {
-                        for (int k = 0; k < largeButtons.length; k++) {
-                            if(displayedContextualOptions.length > k) {
-                                largeButtons[k].setText(displayedContextualOptions[k]);
-                                largeButtons[k].setVisibility(View.VISIBLE);
-                            } else {
-                                largeButtons[k].setVisibility(View.GONE);
-                            }
-                        }
-
-                        setCaptionsVisible(false);
-                        setOptionsVisible(true);
-                        setThinkingVisible(false);
-
-                    });
-
-
-                    SpeechInput.selectOptionWithPhraseSets(r -> handleSelectedOption(r.getHeardPhrase().getText())
-                            , displayedContextualOptions, allOptionPhraseSets());
-
-                    return true;
-                }
-            }
-        }
-        LOG.debug(this, "NO HIDDEN INPUT in " + input);
-        return false;
-    }
-
-    /**
-     *
      *  This method receives the input from the user and asynchronously processes it. It will check
      *  the input for hidden commands, ask the service for a response and call handleNewCurrentResponse
      *  to handle the service's response, while changing
@@ -383,12 +230,8 @@ public class ConversationDemoFragment extends Fragment {
         });
 
         AsyncTask.execute(() -> {
-//            Check for special, hidden commands
-            if (!executeHiddenOptionSelected(input)) {
-                currentResponse = CONV_SERVICE.respondTo(CONV_ID, input);
-                responseStack.push(currentResponse);
-                handleNewCurrentResponse();
-            }
+            currentResponse = CONV_SERVICE.respondTo(CONV_ID, input);
+            handleNewCurrentResponse();
         });
 
     }
@@ -444,24 +287,10 @@ public class ConversationDemoFragment extends Fragment {
             });
 
             SpeechInput.selectOptionWithPhraseSets(r -> handleSelectedOption(r.getHeardPhrase().getText())
-                    , displayedContextualOptions, allOptionPhraseSets());
+                    , displayedContextualOptions, contextualOptionPhraseSets);
 
         }, currentResponse.getResponseText());
 
-    }
-
-
-    /**
-     *
-     * This method returns the phrase sets as arrays for all options, including hidden actions.
-     *
-     *  @return phrase sets as arrays for all options, including hidden actions
-     *
-     */
-    private String[][] allOptionPhraseSets() {
-        String[][] result = Arrays.copyOf(hiddenOptionPhraseSets, hiddenOptionPhraseSets.length + contextualOptionPhraseSets.length);
-        System.arraycopy(contextualOptionPhraseSets, 0, result, hiddenOptionPhraseSets.length, contextualOptionPhraseSets.length);
-        return result;
     }
 
 //    Screen state updater methods
@@ -491,7 +320,7 @@ public class ConversationDemoFragment extends Fragment {
 //    Other helper methods
 
     private void runOnUiThread(Runnable runnable){
-        thisConversationDemoFragment.getActivity().runOnUiThread(runnable);
+        thisMainFragment.getActivity().runOnUiThread(runnable);
     }
 
 

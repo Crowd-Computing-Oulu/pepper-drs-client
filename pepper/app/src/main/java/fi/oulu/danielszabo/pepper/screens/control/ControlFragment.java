@@ -6,6 +6,8 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -16,7 +18,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Switch;
 
+import fi.oulu.danielszabo.pepper.PepperApplication;
 import fi.oulu.danielszabo.pepper.R;
+import fi.oulu.danielszabo.pepper.log.LogFragment;
 import fi.oulu.danielszabo.pepper.tools.MimicTts;
 import fi.oulu.danielszabo.pepper.tools.SimpleController;
 
@@ -28,7 +32,7 @@ public class ControlFragment extends Fragment {
     private SharedPreferences sharedPreferences;
 
 
-    private Button turnLeftBtn, turnRightBtn, turnAroundBtn, stepForwardBtn, sayBtn;
+    private Button turnLeftBtn, turnRightBtn, turnAroundBtn, stepForwardBtn, sayBtn, logsBtn;
     private EditText sayField;
     private Switch switchTts;
 
@@ -68,6 +72,8 @@ public class ControlFragment extends Fragment {
         stepForwardBtn.setOnClickListener(this::onForwardButtonPressed);
         sayBtn = view.findViewById(R.id.btn_say);
         sayBtn.setOnClickListener(this::onSayButtonPressed);
+        logsBtn = view.findViewById(R.id.btn_logs);
+        logsBtn.setOnClickListener(this::onLogsButtonPressed);
 
         this.sayField = view.findViewById(R.id.txtfield_say);
 
@@ -107,6 +113,18 @@ public class ControlFragment extends Fragment {
 
     public void onTurnAroundButtonPressed(View view) {
         SimpleController.turnAround();
+    }
+
+    public void onLogsButtonPressed(View view) {
+        if(!PepperApplication.qiContextInitialised){
+            return;
+        }
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.setReorderingAllowed(true);
+        Fragment newFragment = new LogFragment();
+        fragmentTransaction.replace(R.id.fragment, newFragment, this.getClass().getSimpleName());
+        fragmentTransaction.commit();
     }
 
     public void onSayButtonPressed(View view) {

@@ -1,4 +1,4 @@
-package fi.oulu.danielszabo.pepper.screens.conv_demo.listeners;
+package fi.oulu.danielszabo.pepper.screens.main.listeners;
 
 import android.util.Log;
 

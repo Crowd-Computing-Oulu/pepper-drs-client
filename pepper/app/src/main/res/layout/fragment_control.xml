@@ -55,6 +55,7 @@
             android:layout_marginTop="16dp"
             android:text="@string/txt_movement"
             android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+            android:textSize="14sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -66,6 +67,7 @@
             android:layout_marginTop="16dp"
             android:text="@string/txt_speech"
             android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+            android:textSize="14sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/btn_forward" />
 
@@ -97,6 +99,31 @@
             android:layout_marginTop="16dp"
             android:text="Configuration"
             android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btn_say" />
+
+        <TextView
+            android:id="@+id/txt_server3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="Logs"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/switch_stt" />
+
+        <TextView
+            android:id="@+id/txt_server2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="Configuration"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+            android:textSize="14sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/btn_say" />
 
@@ -123,6 +150,16 @@
             app:layout_constraintStart_toStartOf="@+id/txt_speech"
             app:layout_constraintTop_toBottomOf="@+id/switch_tts"
             tools:ignore="MissingConstraints" />
+
+        <Button
+            android:id="@+id/btn_logs"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="8dp"
+            android:text="logs"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txt_server3" />
 
         <!--<EditText-->
             <!--android:id="@+id/server_ip"-->
