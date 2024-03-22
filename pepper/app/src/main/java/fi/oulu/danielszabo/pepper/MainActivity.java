@@ -29,9 +29,7 @@ public class MainActivity extends RobotActivity implements RobotLifecycleCallbac
     private ImageButton btn_help, btnvolume;
     private TextView statusText;
     private boolean isMuted = false;
-    private boolean isEnglish = true;
 
-    private SpeechEngine speechEngine;
     private AudioManager audioManager;
 
     @Override
@@ -50,38 +48,18 @@ public class MainActivity extends RobotActivity implements RobotLifecycleCallbac
         audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         statusText = (TextView) findViewById(R.id.txt_status);
 
-//        ttsRequestTask = new TTSRequestTask();
-
         this.fragment = getSupportFragmentManager().findFragmentById(R.id.fragment);
-
-//        TextView btn_lang = findViewById(R.id.btn_lang);
-//        btn_lang.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                isEnglish = !isEnglish;
-//                if (isEnglish) {
-//                    btn_lang.setText("FI");
-//                    MimicTts.setServerEndpoint("http://100.79.68.64:59125/api/tts?voice=fi_FI/harri-tapani-ylilammi_low");
-//                } else {
-//                    btn_lang.setText("EN");
-//                    MimicTts.setServerEndpoint("http://100.79.68.64:59125/api/tts?voice=en_US/vctk_low#p240");
-//                }
-//            }
-//        });
 
         // Add mute button and display skip button
         btnvolume = findViewById(R.id.btn_volume);
-        btnvolume.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                isMuted = !isMuted;
-                if (isMuted) {
-                    btnvolume.setImageResource(R.drawable.ic_volume_off);
-                    audioManager.setStreamMute(AudioManager.STREAM_MUSIC, true);
-                } else {
-                    btnvolume.setImageResource(R.drawable.ic_volume_on);
-                    audioManager.setStreamMute(AudioManager.STREAM_MUSIC, false);
-                }
+        btnvolume.setOnClickListener(v -> {
+            isMuted = !isMuted;
+            if (isMuted) {
+                btnvolume.setImageResource(R.drawable.ic_volume_off);
+                audioManager.setStreamMute(AudioManager.STREAM_MUSIC, true);
+            } else {
+                btnvolume.setImageResource(R.drawable.ic_volume_on);
+                audioManager.setStreamMute(AudioManager.STREAM_MUSIC, false);
             }
         });
 
@@ -110,6 +88,7 @@ public class MainActivity extends RobotActivity implements RobotLifecycleCallbac
     }
 
     public void initialised(boolean success) {
+        LOG.debug(this, "Initialisation result: " + success);
         runOnUiThread(() -> {
             if (success) {
                 this.statusText.setText(R.string.status_ok);

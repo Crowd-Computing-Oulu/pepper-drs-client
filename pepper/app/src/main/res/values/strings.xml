@@ -43,7 +43,7 @@
     <string name="hmm">Hmm…</string>
     <string name="start_over">START OVER</string>
     <string name="skip">SKIP</string>
-    <string name="say_or_tap_an_option">say or tap an option</string>
+    <string name="say_or_tap_an_option">say hello</string>
 
     <string name="hello_blank_fragment">Hello there, I\'m Pepper, your new robot friend!    </string>
     <string name="hello_blank_fragment2">I\'m here to make your experience enjoyable and help you get familiar with all the amazing things we can do together. Whether you want to have a chat, play games, or explore my features, I\'m always excited to be by your side. Some of the things that I can do are:</string>
@@ -54,6 +54,6 @@
     <string name="loading">Loading...</string>
     <string name="status_ok">OK</string>
     <string name="status_error">ERROR</string>
-    <string name="option_instruction">SAY or TAP</string>
+    <string name="option_instruction">say HELLO PEPPER</string>
 
 </resources>

@@ -30,8 +30,6 @@ public class ControlFragment extends Fragment {
     private final ControlFragment thisControlFragment = this;
     private OnFragmentInteractionListener mListener;
     private SharedPreferences sharedPreferences;
-
-
     private Button turnLeftBtn, turnRightBtn, turnAroundBtn, stepForwardBtn, sayBtn, logsBtn;
     private EditText sayField;
     private Switch switchTts;

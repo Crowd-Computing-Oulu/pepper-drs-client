@@ -30,7 +30,7 @@ public class MimicTts {
 
 
 //    public static void setServerEndpoint(String newEndpoint) {
-//        SERVER_ENDPOINT = newEndpoint;
+//        SERVER_ENDPOINTzzzz = newEndpoint;
 //    }
 
     public static void setServerAvailable(Boolean available) {

@@ -17,9 +17,15 @@ public class LOG {
     private static boolean isWarningLogEnabled = false;
     private static boolean isErrorLogEnabled = false;
 
+    private static boolean printInsteadOfAndroidLog = false;
+
 
     public static List<LogEntry> logEntryList = new ArrayList<>();
     private static Map<String, LogListener> logListenerHashMap = new HashMap<>();
+
+    public static void setPrintInsteadOfAndroidLog(boolean printInsteadOfAndroidLog) {
+        LOG.printInsteadOfAndroidLog = printInsteadOfAndroidLog;
+    }
 
     public static void addListener(String key, LogListener listener) {
         logListenerHashMap.put(key, listener);
@@ -30,6 +36,7 @@ public class LOG {
             listener.accept(logEntry);
         }
     }
+
 
     public static void info(Object context, String message) {
         if (context instanceof Class) {
@@ -64,7 +71,8 @@ public class LOG {
     }
 
     public static void info(String tag, String message) {
-        android.util.Log.i(tag, message);
+        if(printInsteadOfAndroidLog) System.out.println("INFO [" + tag + "] " + message );
+        else android.util.Log.i(tag, message);
 
         LogEntry logEntry = new LogEntry(
                 LogEntry.LogLevel.INFO,
@@ -81,7 +89,8 @@ public class LOG {
     }
 
     public static void debug(String tag, String message) {
-        android.util.Log.d(tag, message);
+        if(printInsteadOfAndroidLog) System.out.println("DEBUG [" + tag + "] " + message );
+        else android.util.Log.d(tag, message);
 
         LogEntry logEntry = new LogEntry(
                 LogEntry.LogLevel.DEBUG,
@@ -94,12 +103,13 @@ public class LOG {
         notifyListeners(logEntry);
 
         // Debug statement to verify the execution of the debug() method
-        Log.d(TAG, "Debug message logged: " + message);
+        if(!printInsteadOfAndroidLog) Log.d(TAG, "Debug message logged: " + message);
 
     }
 
     public static void warning(String tag, String message) {
-        android.util.Log.w(tag, message);
+        if(printInsteadOfAndroidLog) System.out.println("WARNING [" + tag + "] " + message );
+        else android.util.Log.w(tag, message);
 
         LogEntry logEntry = new LogEntry(
                 LogEntry.LogLevel.WARNING,
@@ -117,7 +127,8 @@ public class LOG {
     }
 
     public static void error(String tag, String message) {
-        android.util.Log.e(tag, message);
+        if(printInsteadOfAndroidLog) System.out.println("ERROR [" + tag + "] " + message );
+        else android.util.Log.e(tag, message);
 
         LogEntry logEntry = new LogEntry(
                 LogEntry.LogLevel.ERROR,
