@@ -9,7 +9,9 @@ import com.aldebaran.qi.Future;
 import com.aldebaran.qi.sdk.builder.AnimateBuilder;
 import com.aldebaran.qi.sdk.builder.AnimationBuilder;
 import com.aldebaran.qi.sdk.builder.SayBuilder;
+import com.aldebaran.qi.sdk.object.conversation.BodyLanguageOption;
 
+import fi.oulu.danielszabo.pepper.Config;
 import fi.oulu.danielszabo.pepper.PepperApplication;
 import fi.oulu.danielszabo.pepper.R;
 
@@ -17,32 +19,13 @@ public class SimpleController {
 
     private final static SimpleController INSTANCE = new SimpleController();
     private static Future<Void> currentSay = null;
-
-    public static final boolean REMOTE_SPEECH_SYNTHESIS_ENABLED = false;
-
     public static SimpleController say(Consumer<Void> then, final String text) {
-        if (MimicTts.isAvailable() && REMOTE_SPEECH_SYNTHESIS_ENABLED) {
-            SpeechInput.pauseWhile(() -> {
-                String[] options = text.split(";");
-                String randomlySelectedOption = options[(int)(Math.random() * options.length)];
-                MimicTts.speak(randomlySelectedOption);
-                try {
-                    then.consume(null);
-                } catch (Throwable throwable) {
-                    throwable.printStackTrace();
-                }
-            });
-            currentSay = null;
-            try {
-                then.consume(null);
-            } catch (Throwable throwable) {
-                throwable.printStackTrace();
-            }
-        } else if (SpeechInput.isListening()) {
+         if (SpeechInput.isListening()) {
             SpeechInput.pauseWhile(() -> {
                 String[] options = text.split(";");
                 String randomlySelectedOption = options[(int)(Math.random()*options.length)];
                 SayBuilder.with(PepperApplication.qiContext) // Create the builder with the context.
+                        .withBodyLanguageOption(Config.isSpeech_animations_enabled()?BodyLanguageOption.NEUTRAL:BodyLanguageOption.DISABLED)
                         .withText("\\rspd=90\\ \\vct=100\\" + randomlySelectedOption) // Set the text to say.
                         .build().async().run();
                 currentSay = null;
@@ -55,6 +38,7 @@ public class SimpleController {
         } else {
             SayBuilder.with(PepperApplication.qiContext) // Create the builder with the context.
                     .withText("\\rspd=90\\ \\vct=100\\" + text) // Set the text to say.
+                    .withBodyLanguageOption(Config.isSpeech_animations_enabled()?BodyLanguageOption.NEUTRAL:BodyLanguageOption.DISABLED)
                     .buildAsync()
                     .andThenConsume(say -> {
                         currentSay = say.async().run()

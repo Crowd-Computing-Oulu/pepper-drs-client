@@ -15,6 +15,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 import fi.oulu.danielszabo.pepper.R;
+import fi.oulu.danielszabo.pepper.services.drs.DRSControlServiceLogListener;
 
 public class LogFragment extends Fragment {
 

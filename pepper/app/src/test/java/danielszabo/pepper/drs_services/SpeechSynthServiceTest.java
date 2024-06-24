@@ -7,7 +7,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import fi.oulu.danielszabo.pepper.drs_services.SpeechSynthService;
+import fi.oulu.danielszabo.pepper.services.drs.SpeechSynthService;
 import fi.oulu.danielszabo.pepper.log.LOG;
 
 public class SpeechSynthServiceTest{

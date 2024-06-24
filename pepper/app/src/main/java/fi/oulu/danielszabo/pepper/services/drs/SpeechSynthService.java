@@ -1,16 +1,12 @@
-package fi.oulu.danielszabo.pepper.drs_services;
+package fi.oulu.danielszabo.pepper.services.drs;
 
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
-import android.os.AsyncTask;
-import android.util.Log;
 
 import com.aldebaran.qi.sdk.builder.AnimateBuilder;
 import com.aldebaran.qi.sdk.builder.AnimationBuilder;
-import com.aldebaran.qi.sdk.builder.SayBuilder;
 import com.aldebaran.qi.sdk.object.actuation.Animate;
-import com.aldebaran.qi.sdk.object.conversation.Say;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
@@ -18,26 +14,30 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
-import java.util.List;
-import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
+import fi.oulu.danielszabo.pepper.Config;
 import fi.oulu.danielszabo.pepper.PepperApplication;
 import fi.oulu.danielszabo.pepper.R;
+import fi.oulu.danielszabo.pepper.log.LOG;
 
-public class SpeechSynthService {
+public class SpeechSynthService implements fi.oulu.danielszabo.pepper.interfaces.SpeechSynthService {
 
     public void speak(String text) {
         byte[] audio = obtainAudio(text);
-        playAudio(audio);
-        playAnimation();
+        ExecutorService executorService = Executors.newFixedThreadPool(2);
+        executorService.submit(() -> playAudio(audio));
+        if(Config.isSpeech_animations_enabled()) {
+            executorService.submit(this::playAnimation);
+        }
     }
 
     public byte[] obtainAudio(String text) {
+        LOG.debug(this, "Synthesising speech: '" + text + "'");
         try {
-            URL url = new URL(Config.SPEECH_SYNTH_URL_BASE);
+            URL url = new URL(DRSConfig.SPEECH_SYNTH_URL_BASE);
 
             // Open a connection to the server
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -65,6 +65,7 @@ public class SpeechSynthService {
             byte[] audioData = outputStream.toByteArray();
             connection.disconnect();
 
+            LOG.debug(this, "Speech synthesis complete");
             return audioData;
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -72,7 +73,7 @@ public class SpeechSynthService {
     }
 
     public void playAudio(byte[] audioData) {
-        int audioSampleRate = 18000;
+        int audioSampleRate = 22050;
         int audioFormat = AudioFormat.ENCODING_PCM_16BIT;
         int channelConfig = AudioFormat.CHANNEL_OUT_MONO;
         int bufferSize = AudioTrack.getMinBufferSize(audioSampleRate, channelConfig, audioFormat);

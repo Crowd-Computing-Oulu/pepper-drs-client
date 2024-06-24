@@ -7,6 +7,17 @@
     android:layout_height="match_parent"
     tools:context=".screens.main.MainFragment">
 
+    <ImageView
+        android:id="@+id/watch_image"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:src="@drawable/watch"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <Button
         android:id="@+id/button_start"
         style="@style/Widget.AppCompat.Button"
@@ -99,65 +110,91 @@
         android:textColor="#FF6F00"
         android:textSize="36sp"
         android:textStyle="bold"
-        android:visibility="visible"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.014" />
 
-    <ProgressBar
-        android:id="@+id/spinner_hmm"
-        style="@style/Widget.AppCompat.ProgressBar"
-        android:layout_width="140dp"
-        android:layout_height="140dp"
-        android:layout_marginTop="28dp"
-        android:backgroundTint="#0F48A2"
-        android:foregroundTint="#0F48A2"
-        android:indeterminateTint="#0F48A2"
-        android:progressBackgroundTint="#0F48A2"
-        android:progressTint="#0F48A2"
-        android:secondaryProgressTint="#0F48A2"
-        android:visibility="invisible"
-        app:layout_constraintEnd_toEndOf="@+id/txt_hmm"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="@+id/txt_hmm"
-        app:layout_constraintTop_toBottomOf="@+id/txt_hmm"
-        tools:visibility="gone" />
-
     <ScrollView
+        android:id="@+id/messages_container_scrollview"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:foregroundGravity="bottom"
+        app:layout_constraintBottom_toTopOf="@+id/speak_btn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txt_instruction">
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:id="@+id/messages_container"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" />
+            android:layout_height="match_parent"
+            android:gravity="bottom"
+            android:orientation="vertical"
+            android:paddingTop="18dp" />
     </ScrollView>
 
     <Button
         android:id="@+id/speak_btn"
         style="@style/Widget.AppCompat.Button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="64dp"
-        android:backgroundTint="#D6E8F6"
+        android:layout_width="200dp"
+        android:layout_height="100dp"
+        android:layout_marginBottom="8dp"
+        android:backgroundTint="#E3F2FD"
         android:text="SPEAK"
         android:textAlignment="center"
         android:textAllCaps="true"
         android:textColor="#2196F3"
-        android:textSize="48sp"
+        android:textSize="32sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/btn_reset"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:backgroundTint="#E3F2FD"
+        android:text="reset"
+        android:textAlignment="center"
+        android:textAllCaps="true"
+        android:textColor="#2196F3"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/speak_btn"
+        app:layout_constraintStart_toEndOf="@+id/speak_btn"
+        app:layout_constraintTop_toTopOf="@+id/speak_btn" />
+
+    <ProgressBar
+        android:id="@+id/loading_spinner"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:indeterminateTint="#2196F3"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/speak_btn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/speak_btn"
+        app:layout_constraintTop_toTopOf="@+id/speak_btn"
+        tools:visibility="invisible" />
+
+    <TextView
+        android:id="@+id/instr_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:text="Press and hold while speaking"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="@+id/speak_btn"
+        app:layout_constraintEnd_toStartOf="@+id/speak_btn"
+        app:layout_constraintTop_toTopOf="@+id/speak_btn" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

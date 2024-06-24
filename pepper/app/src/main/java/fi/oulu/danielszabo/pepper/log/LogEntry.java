@@ -46,4 +46,16 @@ public class LogEntry {
 
         return "[" + formattedTime + " " + logLevel + " " + tag + "] " + message;
     }
+
+    public String getTag() {
+        return tag;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public long getTime() {
+        return time;
+    }
 }

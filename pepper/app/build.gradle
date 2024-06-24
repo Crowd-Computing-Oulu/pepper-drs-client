@@ -12,6 +12,7 @@ android {
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
+
     }
 
     buildTypes {
@@ -21,7 +22,7 @@ android {
         }
     }
 
-//    cool setting to reduce install time from https://github.com/softbankrobotics-labs/additional-documentation-pepper-running-naoqi-2-9-android-version/blob/master/reduce_install_time.md
+    //    cool setting to reduce install time from https://github.com/softbankrobotics-labs/additional-documentation-pepper-running-naoqi-2-9-android-version/blob/master/reduce_install_time.md
     splits {
         // Configures multiple APKs based on ABI.
         abi {

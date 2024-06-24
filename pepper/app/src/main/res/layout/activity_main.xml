@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="#E7FAFF"
+    android:background="#FFFFFF"
     tools:context=".MainActivity">
 
     <Button
@@ -26,10 +26,10 @@
         android:id="@+id/btn_volume"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:src="@drawable/ic_volume_on"
+        android:layout_marginBottom="30dp"
         android:background="@android:color/transparent"
         android:contentDescription="@string/btn_mute"
-        android:layout_marginBottom="30dp"
+        android:src="@drawable/ic_volume_on"
         app:layout_constraintBottom_toBottomOf="@id/btn_home"
         app:layout_constraintEnd_toStartOf="@id/btn_help"
         app:layout_constraintTop_toTopOf="@id/btn_home" />
@@ -38,26 +38,26 @@
         android:id="@+id/btn_help"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:src="@drawable/ic_help"
+        android:layout_marginBottom="30dp"
         android:background="@android:color/transparent"
         android:contentDescription="@string/btn_mute"
-        android:layout_marginBottom="30dp"
+        android:src="@drawable/ic_help"
         app:layout_constraintBottom_toBottomOf="@id/btn_home"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/btn_home" />
 
     <!--<TextView-->
-        <!--android:id="@+id/btn_lang"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:text="EN"-->
-        <!--android:textSize="36dp"-->
-        <!--android:textColor="#154697"-->
-        <!--android:layout_marginBottom="31dp"-->
-        <!--android:layout_marginEnd="3dp"-->
-        <!--app:layout_constraintBottom_toBottomOf="@id/btn_home"-->
-        <!--app:layout_constraintEnd_toStartOf="@id/btn_volume"-->
-        <!--app:layout_constraintTop_toTopOf="@id/btn_home" />-->
+    <!--android:id="@+id/btn_lang"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:text="EN"-->
+    <!--android:textSize="36dp"-->
+    <!--android:textColor="#154697"-->
+    <!--android:layout_marginBottom="31dp"-->
+    <!--android:layout_marginEnd="3dp"-->
+    <!--app:layout_constraintBottom_toBottomOf="@id/btn_home"-->
+    <!--app:layout_constraintEnd_toStartOf="@id/btn_volume"-->
+    <!--app:layout_constraintTop_toTopOf="@id/btn_home" />-->
 
     <Button
         android:id="@+id/btn_home"

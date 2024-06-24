@@ -4,12 +4,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-
-import fi.oulu.danielszabo.pepper.drs_services.SpeechRecService;
-import fi.oulu.danielszabo.pepper.drs_services.SpeechSynthService;
+import fi.oulu.danielszabo.pepper.services.drs.SpeechRecService;
 import fi.oulu.danielszabo.pepper.log.LOG;
 
 public class SpeechRecServiceTest {

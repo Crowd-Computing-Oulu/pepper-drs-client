@@ -12,11 +12,6 @@ public class LOG {
 
     private static final String TAG = "LOG";
 
-    private static boolean isDebugLogEnabled = false;
-    private static boolean isInfoLogEnabled = false;
-    private static boolean isWarningLogEnabled = false;
-    private static boolean isErrorLogEnabled = false;
-
     private static boolean printInsteadOfAndroidLog = false;
 
 
@@ -152,19 +147,5 @@ public class LOG {
         return logListenerHashMap;
     }
 
-    public static void enableDebugLog(boolean enable) {
-        isDebugLogEnabled = enable;
-    }
 
-    public static void enableInfoLog(boolean enable) {
-        isInfoLogEnabled = enable;
-    }
-
-    public static void enableWarningLog(boolean enable) {
-        isWarningLogEnabled = enable;
-    }
-
-    public static void enableErrorLog(boolean enable) {
-        isErrorLogEnabled = enable;
-    }
 }

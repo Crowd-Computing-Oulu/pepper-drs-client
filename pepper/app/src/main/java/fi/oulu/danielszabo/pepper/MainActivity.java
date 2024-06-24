@@ -18,6 +18,9 @@ import com.aldebaran.qi.sdk.RobotLifecycleCallbacks;
 import com.aldebaran.qi.sdk.design.activity.RobotActivity;
 import com.aldebaran.qi.sdk.object.conversation.SpeechEngine;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import fi.oulu.danielszabo.pepper.screens.Help;
 import fi.oulu.danielszabo.pepper.screens.control.ControlFragment;
 import fi.oulu.danielszabo.pepper.screens.main.MainFragment;
@@ -25,7 +28,7 @@ import fi.oulu.danielszabo.pepper.log.LOG;
 import fi.oulu.danielszabo.pepper.log.LogFragment;
 
 public class MainActivity extends RobotActivity implements RobotLifecycleCallbacks, LogFragment.OnFragmentInteractionListener, ControlFragment.OnFragmentInteractionListener, Help.OnFragmentInteractionListener {
-    private Fragment fragment;
+    public Fragment fragment;
     private ImageButton btn_help, btnvolume;
     private TextView statusText;
     private boolean isMuted = false;
@@ -38,12 +41,13 @@ public class MainActivity extends RobotActivity implements RobotLifecycleCallbac
 
         LOG.info(this, "onCreate");
 
-
         // Register the RobotLifecycleCallbacks to this Activity.
         QiSDK.register(this, this);
 
         // Set activity layout
         setContentView(R.layout.activity_main);
+
+        Config.init(this);
 
         audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         statusText = (TextView) findViewById(R.id.txt_status);
@@ -66,25 +70,28 @@ public class MainActivity extends RobotActivity implements RobotLifecycleCallbac
     }
 
     public void onAppSelectorPressed(View view) {
-        if(!PepperApplication.qiContextInitialised){
-            return;
-        }
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.submit(() -> {
+            if(!PepperApplication.qiContextInitialised){
+                return;
+            }
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.setReorderingAllowed(true);
-        Fragment newFragment = null;
-        int id = view.getId();
-        if (id == R.id.btn_home) {
-            newFragment = new MainFragment();
-        }  else if (id == R.id.btn_control) {
-            newFragment = new ControlFragment();
-        }  else if (id == R.id.btn_help) {
-            newFragment = new Help();
-        }  else return;
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.setReorderingAllowed(true);
+            Fragment newFragment = null;
+            int id = view.getId();
+            if (id == R.id.btn_home) {
+                newFragment = new MainFragment();
+            }  else if (id == R.id.btn_control) {
+                newFragment = new ControlFragment();
+            }  else if (id == R.id.btn_help) {
+                newFragment = new Help();
+            }  else return;
 
-        fragmentTransaction.replace(R.id.fragment, newFragment, this.getClass().getSimpleName());
-        fragmentTransaction.commit();
+            fragmentTransaction.replace(R.id.fragment, newFragment, this.getClass().getSimpleName());
+            fragmentTransaction.commit();
+        });
     }
 
     public void initialised(boolean success) {
@@ -92,6 +99,12 @@ public class MainActivity extends RobotActivity implements RobotLifecycleCallbac
         runOnUiThread(() -> {
             if (success) {
                 this.statusText.setText(R.string.status_ok);
+
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.setReorderingAllowed(true);
+                fragmentTransaction.replace(R.id.fragment, new MainFragment(), this.getClass().getSimpleName());
+                fragmentTransaction.commit();
             } else {
                 this.statusText.setText(R.string.status_error);
             }
